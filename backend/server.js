@@ -4,7 +4,21 @@ const path = require("path");
 const { v4: uuid } = require("uuid");
 const { incomeStack, expenseQueue } = require("./dataStore");
 
-const app = express();
+const fs = require("fs");
+
+const DATA_FILE = "./data.json";
+
+function loadData() {
+  try {
+    return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
+  } catch {
+    return [];
+  }
+}
+
+function saveData(data) {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+}
 
 /* ---------- Middleware ---------- */
 app.use(express.json());
@@ -18,7 +32,7 @@ app.use(cors({
 app.use(express.static(path.join(__dirname, "frontend")));
 
 /* ---------- In-memory store ---------- */
-let transactions = [];
+let transactions = loadData();
 
 /* ---------- Routes ---------- */
 app.get("/", (req, res) => {
@@ -43,7 +57,9 @@ app.post("/api/transactions", (req, res) => {
   else expenseQueue.enqueue(tx);
 
   transactions.unshift(tx);
+  saveData(transactions);
   res.json(tx);
+
 });
 
 app.get("/api/summary", (req, res) => {
@@ -65,6 +81,8 @@ app.get("/api/summary", (req, res) => {
 
 app.delete("/api/transactions", (req, res) => {
   transactions.length = 0;
+saveData(transactions);
+res.json({ ok: true });
   incomeStack.items.length = 0;
   expenseQueue.items.length = 0;
   res.json({ ok: true });
