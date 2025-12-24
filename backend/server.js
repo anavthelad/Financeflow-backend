@@ -3,10 +3,6 @@ const cors = require("cors");
 const path = require("path");
 const { v4: uuid } = require("uuid");
 const { incomeStack, expenseQueue } = require("./dataStore");
-const fs = require("fs");
-
-const express = require("express");
-const cors = require("cors");
 
 const app = express();
 
