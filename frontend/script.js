@@ -131,6 +131,39 @@ modal.onclick = (e) => {
   if (e.target === modal) modal.classList.add("hidden");
 };
 
+  const type = typeDropdown?.dataset.value || "income";
+  const category = categoryDropdown?.dataset.value || "Other";
+
+  try {
+    const res = await fetch(api + "/transactions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type,
+        description: descInput.value,
+        amount: Number(amountInput.value),
+        category
+      })
+    });
+
+    if (!res.ok) {
+      const t = await res.text();
+      console.error("Backend error:", t);
+      alert("Backend error — check console");
+      return;
+    }
+
+    modal.classList.add("hidden");
+    descInput.value = "";
+    amountInput.value = "";
+
+    load();
+  } catch (err) {
+    console.error(err);
+    alert("Network error — backend unreachable");
+  }
+});
+
 addBtn.onclick = async () => {
   if (!descInput.value || !amountInput.value) return alert("Fill all fields");
 
