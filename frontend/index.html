@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FinanceFlow</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="logo">
+    <div class="logo-icon">💳</div>
+    <h1>FinanceFlow</h1>
+  </div>
+  <button id="openModal" class="primary-btn">+ Add Transaction</button>
+</header>
+
+<div class="app-container">
+
+  <div class="main-grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="left-column">
+
+      <div class="card balance">
+        <h2>Total Balance</h2>
+        <div class="balance-amount" id="balance">₹0.00</div>
+        <div class="balance-stats">
+          <div class="stat income">Income <span id="income">₹0</span></div>
+          <div class="stat expense">Expenses <span id="expense">₹0</span></div>
+        </div>
+      </div>
+
+      <div class="small-cards">
+        <div class="card small">
+          <h2>Transactions</h2>
+          <div class="small-value" id="txCount">0</div>
+          <div class="small-label">This month</div>
+        </div>
+
+        <div class="card small">
+          <h2>Avg. Expense</h2>
+          <div class="small-value" id="avgExpense">₹0</div>
+          <div class="small-label">Per transaction</div>
+        </div>
+
+        <div class="card small">
+          <h2>Savings Rate</h2>
+          <div class="small-value" id="savingsRate">0%</div>
+          <div class="small-label success">Great job!</div>
+        </div>
+      </div>
+
+      <div class="card recent">
+        <div class="recent-header">
+          <h2>Recent Transactions</h2>
+          <button id="clearAll" class="danger small-btn">Clear All</button>
+        </div>
+        <ul id="list" class="transactions"></ul>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="right-column">
+
+      <div class="card chart">
+        <h2>Spending Over Time</h2>
+        <canvas id="spendingLineChart" height="200"></canvas>
+      </div>
+
+      <div class="card tips" id="tipsCard">
+        <h2>💡 Quick Tips</h2>
+        <ul class="tips-list" id="tipsList"></ul>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    <h3>Add New Transaction</h3>
+
+    <!-- Type Dropdown -->
+    <div class="soft-dropdown" id="typeDropdown" data-value="income">
+      <div class="soft-trigger">
+        <span id="typeValue">Income</span>
+        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="soft-menu">
+        <div class="soft-item" data-value="income">Income</div>
+        <div class="soft-item" data-value="expense">Expense</div>
+      </div>
+    </div>
+
+    <input id="desc" placeholder="Description" />
+    <input id="amount" type="number" placeholder="Amount" />
+
+    <!-- Category Dropdown -->
+    <div class="soft-dropdown" id="categoryDropdown" data-value="Salary">
+      <div class="soft-trigger">
+        <span id="categoryValue">Salary</span>
+        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="soft-menu">
+        <div class="soft-item" data-value="Salary">Salary</div>
+        <div class="soft-item" data-value="Freelance">Freelance</div>
+        <div class="soft-item" data-value="Food">Food</div>
+        <div class="soft-item" data-value="Shopping">Shopping</div>
+        <div class="soft-item" data-value="Bills">Bills</div>
+        <div class="soft-item" data-value="Other">Other</div>
+      </div>
+    </div>
+
+    <button id="add">Add Transaction</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
