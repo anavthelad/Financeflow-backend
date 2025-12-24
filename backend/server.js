@@ -3,22 +3,15 @@ const cors = require("cors");
 const path = require("path");
 const { v4: uuid } = require("uuid");
 const { incomeStack, expenseQueue } = require("./dataStore");
-
 const fs = require("fs");
 
-const DATA_FILE = "./data.json";
+const app = express();
 
-function loadData() {
-  try {
-    return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
-  } catch {
-    return [];
-  }
-}
-
-function saveData(data) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-}
+app.use(express.json());
+app.use(cors({
+  origin: "https://financeflowdashboard.netlify.app",
+  methods: ["GET", "POST", "DELETE"]
+}));
 
 /* ---------- Middleware ---------- */
 app.use(express.json());
