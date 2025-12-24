@@ -1,11 +1,16 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
 const { v4: uuid } = require("uuid");
 const { incomeStack, expenseQueue } = require("./dataStore");
 
 const app = express();
 
+/* ---------- Config ---------- */
+const DATA_FILE = path.join(__dirname, "transactions.json");
+
+/* ---------- Middleware ---------- */
 app.use(express.json());
 
 app.use(cors({
@@ -17,18 +22,26 @@ app.use(cors({
   credentials: true
 }));
 
-/* ---------- Middleware ---------- */
-app.use(express.json());
+/* ---------- Persistence ---------- */
+function loadData() {
+  try {
+    if (!fs.existsSync(DATA_FILE)) return [];
+    const raw = fs.readFileSync(DATA_FILE, "utf-8");
+    return JSON.parse(raw || "[]");
+  } catch (err) {
+    console.error("Failed to load data:", err);
+    return [];
+  }
+}
 
-app.use(cors({
-  origin: "https://financeflowdashboard.netlify.app",
-  methods: ["GET", "POST", "DELETE"],
-}));
+function saveData(data) {
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+  } catch (err) {
+    console.error("Failed to save data:", err);
+  }
+}
 
-// If you are NOT serving frontend from backend in production, you can remove this later
-app.use(express.static(path.join(__dirname, "frontend")));
-
-/* ---------- In-memory store ---------- */
 let transactions = loadData();
 
 /* ---------- Routes ---------- */
@@ -41,12 +54,18 @@ app.get("/api/transactions", (req, res) => {
 });
 
 app.post("/api/transactions", (req, res) => {
+  const { type, description, amount, category } = req.body;
+
+  if (!type || !description || !amount) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
   const tx = {
     id: uuid(),
-    type: req.body.type,
-    description: req.body.description,
-    amount: Number(req.body.amount),
-    category: req.body.category,
+    type,
+    description,
+    amount: Number(amount),
+    category: category || "Other",
     date: new Date().toISOString()
   };
 
@@ -55,8 +74,8 @@ app.post("/api/transactions", (req, res) => {
 
   transactions.unshift(tx);
   saveData(transactions);
-  res.json(tx);
 
+  res.status(201).json(tx);
 });
 
 app.get("/api/summary", (req, res) => {
@@ -77,9 +96,8 @@ app.get("/api/summary", (req, res) => {
 });
 
 app.delete("/api/transactions", (req, res) => {
-  transactions.length = 0;
-saveData(transactions);
-res.json({ ok: true });
+  transactions = [];
+  saveData(transactions);
   incomeStack.items.length = 0;
   expenseQueue.items.length = 0;
   res.json({ ok: true });
