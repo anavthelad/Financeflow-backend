@@ -18,9 +18,12 @@ app.use(cors({
     "https://financeflowdashboard.netlify.app",
     "https://financeflowdashboard1.netlify.app"
   ],
-  methods: ["GET", "POST", "DELETE"],
-  credentials: true
+  methods: ["GET", "POST", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
 }));
+
+// Handle preflight explicitly (important for browsers)
+app.options("*", cors());
 
 /* ---------- Persistence ---------- */
 function loadData() {
@@ -56,7 +59,7 @@ app.get("/api/transactions", (req, res) => {
 app.post("/api/transactions", (req, res) => {
   const { type, description, amount, category } = req.body;
 
-  if (!type || !description || !amount) {
+  if (!type || !description || amount == null) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
@@ -96,7 +99,7 @@ app.get("/api/summary", (req, res) => {
 });
 
 app.delete("/api/transactions", (req, res) => {
-  transactions = [];
+  transactions.length = 0;
   saveData(transactions);
   incomeStack.items.length = 0;
   expenseQueue.items.length = 0;
