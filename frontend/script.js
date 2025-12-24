@@ -1,4 +1,4 @@
-const api = "/api";
+const api = "https://financeflow-backend-s8ze.onrender.com/api";
 
 /* ---------------- ELEMENTS ---------------- */
 
