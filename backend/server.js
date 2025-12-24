@@ -8,9 +8,15 @@ const fs = require("fs");
 const app = express();
 
 app.use(express.json());
+const cors = require("cors");
+
 app.use(cors({
-  origin: "https://financeflowdashboard.netlify.app",
-  methods: ["GET", "POST", "DELETE"]
+  origin: [
+    "https://financeflowdashboard.netlify.app",
+    "https://financeflowdashboard1.netlify.app"
+  ],
+  methods: ["GET", "POST", "DELETE"],
+  credentials: true
 }));
 
 /* ---------- Middleware ---------- */
