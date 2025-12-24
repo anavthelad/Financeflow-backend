@@ -5,10 +5,12 @@ const { v4: uuid } = require("uuid");
 const { incomeStack, expenseQueue } = require("./dataStore");
 const fs = require("fs");
 
+const express = require("express");
+const cors = require("cors");
+
 const app = express();
 
 app.use(express.json());
-const cors = require("cors");
 
 app.use(cors({
   origin: [
